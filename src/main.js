@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
-import { createIcons, House, ArrowLeftRight, Boxes, Wallet, ChartNoAxesCombined, Settings, LogOut, RefreshCw, ShieldCheck, ChevronRight, Egg, Search, CircleAlert, Package, Users, Store, Truck, Receipt, Banknote, Menu, X } from 'lucide';
+import { createIcons, House, ArrowLeftRight, Boxes, Wallet, ChartNoAxesCombined, Settings, LogOut, RefreshCw, ShieldCheck, ChevronRight, Egg, Search, CircleAlert, Package, Users, Store, Truck, Receipt, Banknote, Menu, X, Clock } from 'lucide';
 import './style.css';
-const icons={House,ArrowLeftRight,Boxes,Wallet,ChartNoAxesCombined,Settings,LogOut,RefreshCw,ShieldCheck,ChevronRight,Egg,Search,CircleAlert,Package,Users,Store,Truck,Receipt,Banknote,Menu,X};
+const icons={House,ArrowLeftRight,Boxes,Wallet,ChartNoAxesCombined,Settings,LogOut,RefreshCw,ShieldCheck,ChevronRight,Egg,Search,CircleAlert,Package,Users,Store,Truck,Receipt,Banknote,Menu,X,Clock};
 const url=import.meta.env.VITE_SUPABASE_URL, key=import.meta.env.VITE_SUPABASE_ANON_KEY;
 const configured=!!(url&&key&&!url.includes('YOUR-TEST'));
 const sb=configured?createClient(url,key,{auth:{persistSession:true,autoRefreshToken:true}}):null;
@@ -10,12 +10,12 @@ const root=document.querySelector('#app');
 const safe=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const money=n=>new Intl.NumberFormat('tr-TR',{style:'currency',currency:'TRY',maximumFractionDigits:2}).format(Number(n||0));
 const qty=n=>new Intl.NumberFormat('tr-TR').format(Number(n||0));
-const ico=(name,size=20)=>`<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
+const ico=(name,size=20)=>name==='ArrowLeftRight' ? `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;flex-shrink:0;vertical-align:middle"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>` : `<i data-lucide="${name}" style="width:${size}px;height:${size}px"></i>`;
 function mount(html){root.innerHTML=html;createIcons({icons,attrs:{'stroke-width':1.9}})}
 function notice(t){return `<div class="notice">${ico('CircleAlert',18)}<span>${safe(t)}</span></div>`}
 function login(){mount(`<main class="auth"><div class="auth-card"><div class="brand-mark">${ico('Egg',34)}</div><div class="eyebrow">İŞLETME YÖNETİMİ</div><h1>Avcı<br/>Yumurtacılık <em>V2</em></h1><p>Depo, pazar, stok ve cari hesapların tek noktada.</p>${!configured?notice('Bağlantı ayarları henüz girilmedi. .env dosyasını V2 TEST projenizle doldurun.'):''}${state.error?notice(state.error):''}<form id="login"><label>E-posta<input name="email" type="email" autocomplete="username" required placeholder="ornek@eposta.com"/></label><label>Parola<input name="password" type="password" autocomplete="current-password" required placeholder="••••••••"/></label><button class="primary" ${!configured?'disabled':''}>Giriş yap ${ico('ChevronRight',18)}</button></form><small>Yalnızca yetkili işletme kullanıcıları • V2 TEST</small></div></main>`);
  document.querySelector('#login').onsubmit=async e=>{e.preventDefault();const btn=e.target.querySelector('button');btn.disabled=true;btn.textContent='Giriş yapılıyor…';const f=new FormData(e.target);const {data,error}=await sb.auth.signInWithPassword({email:f.get('email'),password:f.get('password')});if(error){state.error='Giriş yapılamadı: '+error.message;login();return}state.session=data.session;await load()};}
-const nav=[['home','House','Ana Sayfa'],['operations','ArrowLeftRight','İşlemler'],['stock','Boxes','Stok'],['accounts','Wallet','Cariler'],['reports','Receipt','Raporlar'],['history','Receipt','Geçmiş']];
+const nav=[['home','House','Ana Sayfa'],['operations','ArrowLeftRight','İşlemler'],['stock','Boxes','Stok'],['accounts','Wallet','Cariler'],['reports','Receipt','Raporlar'],['history','Clock','Geçmiş']];
 function metric(label,value,sub,style=''){return `<div class="metric ${style}"><span>${safe(label)}</span><strong>${value}</strong><small>${safe(sub)}</small></div>`}
 function row(label,value,sub=''){return `<div class="item"><div><b>${safe(label)}</b>${sub?`<small>${safe(sub)}</small>`:''}</div><strong>${safe(value)}</strong></div>`}
 function section(title,body,action=''){return `<section class="panel"><div class="panel-head"><h3>${safe(title)}</h3>${action}</div>${body}</section>`}
